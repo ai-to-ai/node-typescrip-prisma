@@ -1,0 +1,46 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model addresses {
+    address      String         @id
+    inscriptions inscriptions[]
+}
+
+model blocks {
+    id   Int      @id
+    hash String
+    date DateTime
+
+    transactions transactions[]
+}
+
+model inscriptions {
+    id               String     @id
+    content_type      String
+    nr               Int
+    address          String
+    addresses        addresses? @relation(fields: [addressesAddress], references: [address])
+    addressesAddress String?
+
+    transactions transactions[]
+}
+
+model transactions {
+    id             String @id
+    inscription_id String
+    block_id       Int
+    from_address String
+    to_address String
+
+    inscription    inscriptions? @relation(fields: [inscription_id], references: [id])
+    block          blocks? @relation(fields: [block_id], references: [id])
+}
